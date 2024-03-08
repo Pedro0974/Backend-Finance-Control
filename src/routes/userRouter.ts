@@ -18,5 +18,6 @@ const userBusiness = new UserBusiness(userData, hashManager, authenticator);
 // Passando a instância de UserBusiness para UserController
 const userController = new UserController(userBusiness);
 
-// Configurando a rota para signup
+// Configurando as rotas para signup e login
 userRouter.post("/signup", userController.signup);
+userRouter.post("/login", userController.login);

@@ -35,4 +35,28 @@ export class UserData extends BaseDatabase {
             throw new Error(error.message);
         }
     }
+
+    public login = async (email: string, password: string): Promise<User | null> => {
+        try {
+            // Busca o usuário pelo email
+            const user = await this.getUserByEmail(email);
+
+            // Se não encontrar o usuário, retorna null
+            if (!user) {
+                return null;
+            }
+
+            // Verifica se a senha fornecida corresponde à senha armazenada
+            const passwordMatch = user.password === password;
+
+            // Se as senhas corresponderem, retorna o usuário
+            if (passwordMatch) {
+                return user;
+            } else {
+                return null;
+            }
+        } catch (error: any) {
+            throw new Error(error.message);
+        }
+    }
 }

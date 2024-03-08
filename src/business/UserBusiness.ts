@@ -1,7 +1,7 @@
 import { UserData } from "../data/UserData";
-import { generateId } from "../services/IdGenerator";
 import { HashManager } from "../services/HashManager";
-import { Authenticator, AuthenticationData } from "../services/Authenticator";
+import { Authenticator } from "../services/Authenticator";
+import { generateId } from "../services/IdGenerator";
 
 export class UserBusiness {
     private userData: UserData;
@@ -44,5 +44,31 @@ export class UserBusiness {
         const token = this.authenticator.generateToken({ id });
 
         return token;
+    }
+
+    public login = async (email: string, password: string): Promise<string> => {
+        // Verifica se todos os dados obrigatórios estão presentes
+        if (!email || !password) {
+            throw new Error("Missing input");
+        }
+
+        // Busca o usuário pelo email
+        const user = await this.userData.getUserByEmail(email);
+
+        // Se o usuário não for encontrado, lança um erro
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        // Verifica se a senha fornecida corresponde à senha armazenada
+        const passwordMatch = await this.hashManager.compare(password, user.password);
+
+        // Se as senhas corresponderem, gera o token de autenticação
+        if (passwordMatch) {
+            const token = this.authenticator.generateToken({ id: user.id });
+            return token;
+        } else {
+            throw new Error("Invalid password");
+        }
     }
 }
