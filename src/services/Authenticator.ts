@@ -1,5 +1,9 @@
 import * as jwt from "jsonwebtoken";
 export class Authenticator {
+  getUserIdFromToken(token: string): string {
+    const decodedToken = jwt.verify(token, process.env.JWT_KEY as string) as AuthenticationData;
+    return decodedToken.id;
+  }
   generateToken = (payload: AuthenticationData): string => {
     return jwt.sign(payload, process.env.JWT_KEY as string, {
       expiresIn: "59min",
